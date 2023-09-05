@@ -1,30 +1,27 @@
 #!/usr/bin/python3
-"""Prints all City objects from the database hbtn_0e_14_usa"""
+"""
+Prints all City objects from the database hbtn_0e_14_usa
+"""
+import sys
+from relationship_state import Base, State
+from relationship_city import City
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 
-if __name__ == "__main__":
-    import sys
-    from relationship_state import Base, State
-    from relationship_city import City
-    from sqlalchemy.orm import sessionmaker
-    from sqlalchemy import create_engine
 
-    # Create an instance of the Database
-    engine = create_engine('mysql+mysqldb://{}:{}@localhost/{}\
-'.format(sys.argv[1], sys.argv[2], sys.argv[3]), pool_pre_ping=True)
-
-    # Create the necessary database tables
+if __name__ == '__main__':
+    engine = create_engine('mysql+mysqldb://{}:{}@localhost:3306/{}'.
+                           format(sys.argv[1], sys.argv[2], sys.argv[3]),
+                           pool_pre_ping=True)
     Base.metadata.create_all(engine)
 
-    # Create a session factory bound to the engine
     Session = sessionmaker(bind=engine)
-
-    # Create an instance of the Session class
     session = Session()
 
-    # Query and print all states and their associated cities
-    records = session.query(State).order_by(State.id)
-    for state in records:
+    st = session.query(State).outerjoin(City).order_by(State.id, City.id).all()
+
+    for state in st:
         print("{}: {}".format(state.id, state.name))
         for city in state.cities:
             print("    {}: {}".format(city.id, city.name))
-
+            
