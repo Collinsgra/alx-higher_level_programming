@@ -1,5 +1,2 @@
 // script that updates html tag
-var htmlSelector = document.querySelector('header');
-
-// changes color of the item
-htmlSelector.style.color = '#FF0000';
+document.querySelector('header').style.color = '#FF0000';
